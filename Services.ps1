@@ -57,16 +57,16 @@ public static extern bool SetConsoleMode(IntPtr hConsoleHandle, uint dwMode);
 
 function Write-Ansi([string]$Text) { [Console]::Write($Text) }
 
-function Get-BloodPalette {
+function Get-BloodPalette {  # SeppukuWW purple theme
     if ($script:BloodPalette) { return $script:BloodPalette }
     $script:BloodPalette = @{
-        ShadowFar  = "$esc[38;2;35;0;0m"
-        ShadowNear = "$esc[38;2;80;0;0m"
-        Mid        = "$esc[38;2;150;0;0m"
-        Blood      = "$esc[38;2;200;10;10m"
-        Hot        = "$esc[38;2;255;35;35m"
-        Glow       = "$esc[38;2;255;90;90m"
-        Drip       = "$esc[38;2;130;0;0m"
+        ShadowFar  = "$esc[38;2;25;0;45m"
+        ShadowNear = "$esc[38;2;55;0;95m"
+        Mid        = "$esc[38;2;120;40;190m"
+        Blood      = "$esc[38;2;150;55;230m"
+        Hot        = "$esc[38;2;185;90;255m"
+        Glow       = "$esc[38;2;210;130;255m"
+        Drip       = "$esc[38;2;95;30;150m"
         Dim        = "$esc[38;2;85;85;85m"
         Soft       = "$esc[38;2;170;170;170m"
         Green      = "$esc[38;2;80;220;120m"
@@ -209,12 +209,12 @@ Write-BloodBanner -Subtitle $script:ToolName
 
 if (-not (Test-IsAdmin)) {
     Write-Section 'ERROR'
-    Write-Host '  Нужны права администратора.' -ForegroundColor Red
+    Write-Host '  Нужны права администратора.' -ForegroundColor Magenta
     Write-BloodFoot
     return
 }
 
-Write-Host ("  {0}" -f ('═' * 64)) -ForegroundColor DarkRed
+Write-Host ("  {0}" -f ('═' * 64)) -ForegroundColor Magenta
 Write-KV 'Компьютер' $env:COMPUTERNAME
 Write-KV 'Пользователь' $env:USERNAME
 Write-KV 'Сейчас' (Get-Date -Format 'yyyy-MM-dd HH:mm:ss')
@@ -224,7 +224,7 @@ try {
     Write-KV 'ОС' ("{0} (Build {1})" -f $caption, $os.BuildNumber)
 }
 catch {}
-Write-Host ("  {0}" -f ('═' * 64)) -ForegroundColor DarkRed
+Write-Host ("  {0}" -f ('═' * 64)) -ForegroundColor Magenta
 
 $WatchServices = [ordered]@{
     'SysMain'    = 'SysMain'
@@ -275,7 +275,7 @@ function Resolve-ServiceCached([string]$Name) {
 
 Write-Section 'SERVICE STATUS'
 Write-Host ("  {0,-14} {1,-44}   {2}" -f 'SERVICE', 'DISPLAY NAME', 'STATE') -ForegroundColor DarkGray
-Write-Host ("  {0}" -f ('┄' * 68)) -ForegroundColor DarkRed
+Write-Host ("  {0}" -f ('┄' * 68)) -ForegroundColor Magenta
 
 $healed = 0
 $alive  = 0
@@ -324,7 +324,7 @@ foreach ($name in $WatchServices.Keys) {
 }
 
 $total = $WatchServices.Count
-Write-Host ("  {0}" -f ('┄' * 68)) -ForegroundColor DarkRed
+Write-Host ("  {0}" -f ('┄' * 68)) -ForegroundColor Magenta
 $c = Get-BloodPalette
 Write-Ansi ("  $($c.Green)● alive: $alive$($c.Reset)   $($c.Hot)✖ вылечено: $healed$($c.Reset)`n")
 Write-HealthBar -Alive $alive -Total $total
@@ -524,7 +524,7 @@ if ($healed -eq 0) {
 } elseif ($healed -le 3) {
     Write-Host ("  Подозрительно: вылечено {0} служб(и). Запусти Service-Enabler.ps1." -f $healed) -ForegroundColor Yellow
 } else {
-    Write-Host ("  СИЛЬНО ЧИСТИЛИ: вылечено {0} служб. Смотри BAM/Prefetch/ивенты." -f $healed) -ForegroundColor Red
+    Write-Host ("  СИЛЬНО ЧИСТИЛИ: вылечено {0} служб. Смотри BAM/Prefetch/ивенты." -f $healed) -ForegroundColor Magenta
 }
 
 Stop-SsReport
