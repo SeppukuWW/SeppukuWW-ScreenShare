@@ -81,33 +81,23 @@ function Write-BloodBanner {
     Enable-AnsiConsole
     $c = Get-BloodPalette
     $art = @(
-        '███████╗ ██████╗██╗  ██╗██╗    ██╗ █████╗ ██████╗ ███████╗ █████╗ ██╗  ██╗███╗   ██╗',
-        '██╔════╝██╔════╝██║  ██║██║    ██║██╔══██╗██╔══██╗╚══███╔╝██╔══██╗██║  ██║████╗  ██║',
-        '███████╗██║     ███████║██║ █╗ ██║███████║██████╔╝  ███╔╝ ███████║███████║██╔██╗ ██║',
-        '╚════██║██║     ██╔══██║██║███╗██║██╔══██║██╔══██╗ ███╔╝  ██╔══██║██╔══██║██║╚██╗██║',
-        '███████║╚██████╗██║  ██║╚███╔███╔╝██║  ██║██║  ██║███████╗██║  ██║██║  ██║██║ ╚████║',
-        '╚══════╝ ╚═════╝╚═╝  ╚═╝ ╚══╝╚══╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝'
+        ' ████ █████ ████  ████  ██ ██ ██ ██ ██ ██ ██   ██ ██   ██ ',
+        '██    ██    ██ ██ ██ ██ ██ ██ ████  ██ ██ ██   ██ ██   ██ ',
+        ' ███  ████  ████  ████  ██ ██ ████  ██ ██ ██ █ ██ ██ █ ██ ',
+        '   ██ ██    ██    ██    ██ ██ ████  ██ ██ ███ ███ ███ ███ ',
+        '████  █████ ██    ██     ███  ██ ██  ███  ██   ██ ██   ██ '
     )
-    $grad = @($c.Glow, $c.Hot, $c.Blood, $c.Blood, $c.Mid, $c.ShadowNear)
-
+    $grad = @($c.Glow, $c.Hot, $c.Blood, $c.Blood, $c.Mid)
     Write-Host ''
-    foreach ($line in $art) { Write-Ansi ("   $($c.ShadowFar)$line$($c.Reset)`n") }
-    Write-Ansi ("$esc[$($art.Count)A")
-    foreach ($line in $art) { Write-Ansi ("  $($c.ShadowNear)$line$($c.Reset)`n") }
-    Write-Ansi ("$esc[$($art.Count)A")
     for ($i = 0; $i -lt $art.Count; $i++) {
-        Write-Ansi ("$($grad[$i])$($art[$i])$($c.Reset)`n")
+        Write-Ansi ("$($grad[$i % $grad.Count])$($art[$i])$($c.Reset)`n")
     }
-
-    Write-Ansi ("$($c.Drip)  ║  ║    ║║      ║   ║║║     ║  ║    ║║     ║  ║   ║$($c.Reset)`n")
-    Write-Ansi ("$($c.Drip)  ┘  ░    ░░   ▄  ▘   ░░░  ▄  ▘  ░    ░░  ▄  ▘   ▘$($c.Reset)`n")
-    Write-Ansi ("$($c.ShadowFar)  $($('═' * 72))$($c.Reset)`n")
-
-    $tag = "by $script:BrandName"
-    Write-Ansi ("$($c.ShadowFar)   $tag$($c.Reset)`n")
-    Write-Ansi ("$esc[1A$($c.Bold)$($c.Hot)$tag$($c.Reset)  $($c.Dim)$Subtitle$($c.Reset)`n")
+    Write-Ansi ("$($c.ShadowFar)  $($('═' * 58))$($c.Reset)`n")
+    $tag = "by SeppukuWW"
+    Write-Ansi ("$($c.Bold)$($c.Hot)$tag$($c.Reset)  $($c.Dim)$Subtitle$($c.Reset)`n")
     Write-Host ''
 }
+
 
 function Write-BloodFoot {
     param([string]$Subtitle = '')
