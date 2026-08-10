@@ -35,16 +35,16 @@ public static extern bool SetConsoleMode(IntPtr hConsoleHandle, uint dwMode);
 
 function Write-Ansi([string]$Text) { [Console]::Write($Text) }
 
-function Get-BloodPalette {
+function Get-BloodPalette {  # SeppukuWW purple theme
     if ($script:BloodPalette) { return $script:BloodPalette }
     $script:BloodPalette = @{
-        ShadowFar  = "$esc[38;2;35;0;0m"
-        ShadowNear = "$esc[38;2;80;0;0m"
-        Mid        = "$esc[38;2;150;0;0m"
-        Blood      = "$esc[38;2;200;10;10m"
-        Hot        = "$esc[38;2;255;35;35m"
-        Glow       = "$esc[38;2;255;90;90m"
-        Drip       = "$esc[38;2;130;0;0m"
+        ShadowFar  = "$esc[38;2;25;0;45m"
+        ShadowNear = "$esc[38;2;55;0;95m"
+        Mid        = "$esc[38;2;120;40;190m"
+        Blood      = "$esc[38;2;150;55;230m"
+        Hot        = "$esc[38;2;185;90;255m"
+        Glow       = "$esc[38;2;210;130;255m"
+        Drip       = "$esc[38;2;95;30;150m"
         Dim        = "$esc[38;2;85;85;85m"
         Soft       = "$esc[38;2;170;170;170m"
         Reset      = "$esc[0m"
@@ -93,7 +93,7 @@ function Write-Section([string]$Text) {
 
 function Write-BloodOk([string]$Text)   { Write-Host "[+] $Text" -ForegroundColor Green }
 function Write-BloodWarn([string]$Text) { Write-Host "[!] $Text" -ForegroundColor Yellow }
-function Write-BloodFail([string]$Text) { Write-Host "[-] $Text" -ForegroundColor Red }
+function Write-BloodFail([string]$Text) { Write-Host "[-] $Text" -ForegroundColor Magenta }
 function Write-BloodInfo([string]$Text) { Write-Host "[*] $Text" -ForegroundColor DarkGray }
 
 function Test-Administrator {
@@ -480,8 +480,8 @@ function Get-SystemIndexes {
     catch {
         Write-Warning "Error parsing $FilePath : $_"
         if ($script:DebugMode) {
-            Write-Host "  [DEBUG] Exception: $($_.Exception.GetType().Name)" -ForegroundColor Red
-            Write-Host "  [DEBUG] Message: $($_.Exception.Message)" -ForegroundColor Red
+            Write-Host "  [DEBUG] Exception: $($_.Exception.GetType().Name)" -ForegroundColor Magenta
+            Write-Host "  [DEBUG] Message: $($_.Exception.Message)" -ForegroundColor Magenta
         }
         return @()
     }
@@ -987,10 +987,10 @@ function Start-DoomsdayScan {
             }
             
             $displayedCount++
-            Write-Ansi (" $esc[38;2;255;45;45m✖ DELETED$esc[0m ")
+            Write-Ansi (" $esc[38;2;185;90;255m✖ DELETED$esc[0m ")
             Write-Host $missingPath -ForegroundColor White
             Write-Host '      Source: ' -NoNewline -ForegroundColor DarkGray
-            Write-Host "$($fileMetadata[$missingPath].SourceFile)" -ForegroundColor DarkRed
+            Write-Host "$($fileMetadata[$missingPath].SourceFile)" -ForegroundColor Magenta
         }
         
         if ($displayedCount -eq 0) {
@@ -1048,12 +1048,12 @@ function Start-DoomsdayScan {
                     SingleLetterClasses = $result.SingleLetterClasses.Count
                 }
                 
-                Write-Ansi (" $esc[38;2;255;20;20m✖ DETECTION$esc[0m ")
-                Write-Host $actualPath -ForegroundColor Red
+                Write-Ansi (" $esc[38;2;170;70;245m✖ DETECTION$esc[0m ")
+                Write-Host $actualPath -ForegroundColor Magenta
                 Write-Host '    Confidence: ' -NoNewline -ForegroundColor DarkGray
 
                 switch ($result.Confidence) {
-                    'HIGH'   { Write-Host 'HIGH' -ForegroundColor Red }
+                    'HIGH'   { Write-Host 'HIGH' -ForegroundColor Magenta }
                     'MEDIUM' { Write-Host 'MEDIUM' -ForegroundColor Yellow }
                     'LOW'    { Write-Host 'LOW' -ForegroundColor DarkGray }
                 }
@@ -1069,7 +1069,7 @@ function Start-DoomsdayScan {
         }
         catch {
             Write-Host "`r                              `r" -NoNewline
-            Write-Host "Error scanning $filename : $_" -ForegroundColor Red
+            Write-Host "Error scanning $filename : $_" -ForegroundColor Magenta
         }
     }
     
@@ -1089,46 +1089,46 @@ function Start-DoomsdayScan {
     Write-Host 'Doomsday Client detections: ' -NoNewline -ForegroundColor DarkGray
 
     if ($detections.Count -gt 0) {
-        Write-Ansi ("$esc[1;38;2;255;40;40m{0}$esc[0m`n" -f $detections.Count)
+        Write-Ansi ("$esc[1;38;2;185;90;255m{0}$esc[0m`n" -f $detections.Count)
 
-        Write-Host 'Detections by confidence:' -ForegroundColor DarkRed
+        Write-Host 'Detections by confidence:' -ForegroundColor Magenta
         $high = ($detections | Where-Object { $_.Confidence -eq 'HIGH' }).Count
         $medium = ($detections | Where-Object { $_.Confidence -eq 'MEDIUM' }).Count
         $low = ($detections | Where-Object { $_.Confidence -eq 'LOW' }).Count
 
-        if ($high -gt 0) { Write-Host ("  HIGH: {0}" -f $high) -ForegroundColor Red }
+        if ($high -gt 0) { Write-Host ("  HIGH: {0}" -f $high) -ForegroundColor Magenta }
         if ($medium -gt 0) { Write-Host ("  MEDIUM: {0}" -f $medium) -ForegroundColor Yellow }
         if ($low -gt 0) { Write-Host ("  LOW: {0}" -f $low) -ForegroundColor DarkGray }
 
         Write-Host ''
-        Write-Ansi ("$esc[1;38;2;255;20;20m  DOOMSDAY CLIENT DETECTED ON THIS SYSTEM!$esc[0m`n")
+        Write-Ansi ("$esc[1;38;2;170;70;245m  DOOMSDAY CLIENT DETECTED ON THIS SYSTEM!$esc[0m`n")
 
         Write-Section 'DETECTION DETAILS'
 
         $detectionNum = 1
         foreach ($detection in $detections) {
-            Write-Ansi (" $esc[38;2;255;45;45m✖ [$detectionNum]$esc[0m ")
+            Write-Ansi (" $esc[38;2;185;90;255m✖ [$detectionNum]$esc[0m ")
             Write-Host $detection.Path -ForegroundColor White
             Write-Host '    Source File: ' -NoNewline -ForegroundColor DarkGray
-            Write-Host $detection.SourceFile -ForegroundColor DarkRed
+            Write-Host $detection.SourceFile -ForegroundColor Magenta
             Write-Host '    Index Number: ' -NoNewline -ForegroundColor DarkGray
-            Write-Host ("#{0}" -f $detection.IndexNumber) -ForegroundColor Red
+            Write-Host ("#{0}" -f $detection.IndexNumber) -ForegroundColor Magenta
             Write-Host '    Confidence: ' -NoNewline -ForegroundColor DarkGray
 
             switch ($detection.Confidence) {
-                'HIGH'   { Write-Host 'HIGH' -ForegroundColor Red }
+                'HIGH'   { Write-Host 'HIGH' -ForegroundColor Magenta }
                 'MEDIUM' { Write-Host 'MEDIUM' -ForegroundColor Yellow }
                 'LOW'    { Write-Host 'LOW' -ForegroundColor DarkGray }
             }
 
             if ($detection.IsRenamedJar) {
                 Write-Host '    Renamed JAR: ' -NoNewline -ForegroundColor DarkGray
-                Write-Host 'YES' -ForegroundColor Red
+                Write-Host 'YES' -ForegroundColor Magenta
             }
 
             if ($detection.BytePatterns -gt 0) {
                 Write-Host '    Byte Patterns: ' -NoNewline -ForegroundColor DarkGray
-                Write-Host $detection.BytePatterns -ForegroundColor Red
+                Write-Host $detection.BytePatterns -ForegroundColor Magenta
             }
 
             if ($detection.ClassMatches -gt 0) {
@@ -1156,7 +1156,7 @@ function Start-DoomsdayScan {
         Write-Host '  Doomsday не найден.' -ForegroundColor Green
     }
     elseif (@($detections | Where-Object { $_.Confidence -eq 'HIGH' }).Count -gt 0) {
-        Write-Host '  HIGH: есть сильные следы Doomsday / renamed JAR.' -ForegroundColor Red
+        Write-Host '  HIGH: есть сильные следы Doomsday / renamed JAR.' -ForegroundColor Magenta
     }
     else {
         Write-Host '  Есть MEDIUM/LOW — перепроверь вручную.' -ForegroundColor Yellow
