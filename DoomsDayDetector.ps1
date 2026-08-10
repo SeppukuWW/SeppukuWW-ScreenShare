@@ -35,45 +35,57 @@ public static extern bool SetConsoleMode(IntPtr hConsoleHandle, uint dwMode);
 
 function Write-Ansi([string]$Text) { [Console]::Write($Text) }
 
-function Get-BloodPalette {  # SeppukuWW purple theme
+function Get-BloodPalette {  # SeppukuWW purple 3D theme
     if ($script:BloodPalette) { return $script:BloodPalette }
     $script:BloodPalette = @{
-        ShadowFar  = "$esc[38;2;25;0;45m"
-        ShadowNear = "$esc[38;2;55;0;95m"
-        Mid        = "$esc[38;2;120;40;190m"
-        Blood      = "$esc[38;2;150;55;230m"
-        Hot        = "$esc[38;2;185;90;255m"
-        Glow       = "$esc[38;2;210;130;255m"
-        Drip       = "$esc[38;2;95;30;150m"
-        Dim        = "$esc[38;2;85;85;85m"
-        Soft       = "$esc[38;2;170;170;170m"
+        ShadowFar  = "$esc[38;2;28;0;55m"
+        ShadowNear = "$esc[38;2;70;15;120m"
+        Mid        = "$esc[38;2;130;50;210m"
+        Blood      = "$esc[38;2;160;70;240m"
+        Hot        = "$esc[38;2;195;110;255m"
+        Glow       = "$esc[38;2;220;160;255m"
+        Drip       = "$esc[38;2;100;40;170m"
+        Dim        = "$esc[38;2;90;85;110m"
+        Soft       = "$esc[38;2;190;180;210m"
+        Green      = "$esc[38;2;80;220;120m"
         Reset      = "$esc[0m"
         Bold       = "$esc[1m"
     }
     return $script:BloodPalette
 }
 
+
 function Write-BloodBanner {
     param([string]$Subtitle = 'ScreenShare Tool')
     Enable-AnsiConsole
     $c = Get-BloodPalette
+    # SEPPUKUWW — 3D layers (shadow + mid + front), purple only
     $art = @(
-        ' ████ █████ ████  ████  ██ ██ ██ ██ ██ ██ ██   ██ ██   ██ ',
-        '██    ██    ██ ██ ██ ██ ██ ██ ████  ██ ██ ██   ██ ██   ██ ',
-        ' ███  ████  ████  ████  ██ ██ ████  ██ ██ ██ █ ██ ██ █ ██ ',
-        '   ██ ██    ██    ██    ██ ██ ████  ██ ██ ███ ███ ███ ███ ',
-        '████  █████ ██    ██     ███  ██ ██  ███  ██   ██ ██   ██ '
+        '███████╗███████╗██████╗ ██████╗ ██╗   ██╗██╗  ██╗██╗   ██╗██╗    ██╗██╗    ██╗',
+        '██╔════╝██╔════╝██╔══██╗██╔══██╗██║   ██║██║ ██╔╝██║   ██║██║    ██║██║    ██║',
+        '███████╗█████╗  ██████╔╝██████╔╝██║   ██║█████╔╝ ██║   ██║██║ █╗ ██║██║ █╗ ██║',
+        '╚════██║██╔══╝  ██╔═══╝ ██╔═══╝ ██║   ██║██╔═██╗ ██║   ██║██║███╗██║██║███╗██║',
+        '███████║███████╗██║     ██║     ╚██████╔╝██║  ██╗╚██████╔╝╚███╔███╔╝╚███╔███╔╝',
+        '╚══════╝╚══════╝╚═╝     ╚═╝      ╚═════╝ ╚═╝  ╚═╝ ╚═════╝  ╚══╝╚══╝  ╚══╝╚══╝ '
     )
-    $grad = @($c.Glow, $c.Hot, $c.Blood, $c.Blood, $c.Mid)
     Write-Host ''
+    # depth layer 1 (far)
+    foreach ($line in $art) { Write-Ansi ("    $($c.ShadowFar)$line$($c.Reset)`n") }
+    Write-Ansi ("$esc[$($art.Count)A")
+    # depth layer 2 (near)
+    foreach ($line in $art) { Write-Ansi ("  $($c.ShadowNear)$line$($c.Reset)`n") }
+    Write-Ansi ("$esc[$($art.Count)A")
+    # front 3D face (bright purple gradient)
+    $grad = @($c.Glow, $c.Hot, $c.Blood, $c.Blood, $c.Mid, $c.ShadowNear)
     for ($i = 0; $i -lt $art.Count; $i++) {
-        Write-Ansi ("$($grad[$i % $grad.Count])$($art[$i])$($c.Reset)`n")
+        Write-Ansi ("$($c.Bold)$($grad[$i])$($art[$i])$($c.Reset)`n")
     }
-    Write-Ansi ("$($c.ShadowFar)  $($('═' * 58))$($c.Reset)`n")
+    Write-Ansi ("$($c.Drip)  $($('═' * 78))$($c.Reset)`n")
     $tag = "by SeppukuWW"
-    Write-Ansi ("$($c.Bold)$($c.Hot)$tag$($c.Reset)  $($c.Dim)$Subtitle$($c.Reset)`n")
+    Write-Ansi ("$($c.Bold)$($c.Hot)$tag$($c.Reset)  $($c.Glow)$Subtitle$($c.Reset)  $($c.Dim)v3-purple-3d$($c.Reset)`n")
     Write-Host ''
 }
+
 
 
 function Write-BloodFoot {
